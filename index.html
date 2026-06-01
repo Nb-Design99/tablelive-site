@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TableLive — Les réservations de votre restaurant, en direct</title>
+<meta name="description" content="TableLive centralise les réservations de votre restaurant, gère votre plan de salle en temps réel et confirme automatiquement vos clients. Sans installation, sur tablette, ordinateur et mobile." />
+<meta property="og:title" content="TableLive — Réservations & plan de salle pour restaurants" />
+<meta property="og:description" content="Les réservations de votre restaurant, en direct. Plan de salle interactif, confirmations automatiques, sans installation." />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_CH" />
+<meta name="theme-color" content="#10211a" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f7a52'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Georgia'%3ET%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#1f7a52; --green-dark:#10211a; --green-glow:#6ed09a; --gold:#c9a84c;
+    --cream:#f8f6f1; --ink:#16201c; --soft:#5f6b64; --line:#e6e9e6; --card:#ffffff;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--cream);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.08;letter-spacing:-.5px;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 6vw;}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:2.5px;font-size:12px;font-weight:600;color:var(--gold);}
+  .eyebrow::before{content:'';width:26px;height:1px;background:var(--gold);}
+  .btn{display:inline-flex;align-items:center;gap:9px;font:inherit;font-weight:600;font-size:15px;padding:13px 26px;border-radius:999px;cursor:pointer;border:1px solid transparent;transition:transform .15s,box-shadow .2s,background .2s;}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 10px 26px -10px rgba(31,122,82,.6);}
+  .btn.primary:hover{background:#1a6845;transform:translateY(-2px);}
+  .btn.ghost{background:transparent;border-color:rgba(255,255,255,.35);color:#fff;}
+  .btn.ghost:hover{background:rgba(255,255,255,.1);}
+  .btn.dark{background:var(--green-dark);color:#fff;}
+  .btn.dark:hover{background:#06120d;transform:translateY(-2px);}
+
+  /* Header */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,box-shadow .3s,padding .3s;}
+  header .bar{display:flex;align-items:center;justify-content:space-between;padding:20px 6vw;}
+  header.scrolled{background:rgba(248,246,241,.9);backdrop-filter:blur(12px);box-shadow:0 2px 20px -12px rgba(0,0,0,.3);}
+  header.scrolled .bar{padding:12px 6vw;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:#fff;transition:color .3s;}
+  header.scrolled .logo{color:var(--ink);}
+  .logo .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--green-glow),var(--gold));display:grid;place-items:center;color:var(--green-dark);font-size:19px;}
+  header nav{display:flex;align-items:center;gap:30px;}
+  header nav a.lnk{color:rgba(255,255,255,.85);font-size:14.5px;font-weight:500;transition:color .2s;}
+  header.scrolled nav a.lnk{color:var(--ink);}
+  header nav a.lnk:hover{color:var(--gold);}
+  .nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:6px;}
+  .nav-toggle span{width:25px;height:2px;background:#fff;transition:.3s;}
+  header.scrolled .nav-toggle span{background:var(--ink);}
+
+  /* Hero */
+  .hero{position:relative;padding:150px 0 90px;background:radial-gradient(1100px 600px at 75% -5%, #1f5f44 0%, transparent 55%), linear-gradient(160deg,#10211a,#16342a);color:#fff;overflow:hidden;}
+  .hero::after{content:'';position:absolute;left:-10%;bottom:-40%;width:60%;height:90%;background:radial-gradient(circle, rgba(110,208,154,.14), transparent 70%);}
+  .hero-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;}
+  .hero h1{font-size:clamp(40px,6vw,68px);margin:18px 0 20px;color:#fff;}
+  .hero h1 em{font-style:italic;color:var(--green-glow);}
+  .hero p.lead{font-size:clamp(16px,2vw,19px);color:#d7e3db;max-width:520px;margin-bottom:30px;}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:30px;color:#9db8a8;font-size:13.5px;}
+  .hero-trust span{display:flex;align-items:center;gap:7px;}
+
+  /* Mockup */
+  .mockup{position:relative;background:#fff;border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);padding:16px;color:var(--ink);}
+  .mockup .mk-top{display:flex;align-items:center;gap:7px;padding:4px 6px 12px;}
+  .mockup .mk-top i{width:11px;height:11px;border-radius:50%;background:#e6e9e6;display:block;}
+  .mockup .mk-title{margin-left:8px;font-size:12px;color:var(--soft);font-weight:600;}
+  .floor{position:relative;background:linear-gradient(rgba(31,122,82,.06) 1px,transparent 1px) 0 0/26px 26px,linear-gradient(90deg,rgba(31,122,82,.06) 1px,transparent 1px) 0 0/26px 26px,#fcfdfc;border:1px solid var(--line);border-radius:10px;height:230px;}
+  .t{position:absolute;display:grid;place-items:center;border:2px solid var(--green);background:var(--green-soft,#e7f3ec);color:var(--green);border-radius:7px;font-weight:700;font-size:13px;box-shadow:0 2px 7px rgba(20,30,25,.1);}
+  .t.res{border-color:var(--gold);background:#fbeede;color:#a9842f;}
+  .t.occ{border-color:#2f6fb0;background:#e6eff7;color:#2f6fb0;}
+  .mk-toast{position:absolute;right:14px;top:14px;background:var(--green-dark);color:#fff;border-left:4px solid var(--gold);border-radius:11px;padding:10px 13px;display:flex;gap:9px;align-items:center;box-shadow:0 14px 30px rgba(0,0,0,.3);animation:pop .5s ease;font-size:12.5px;max-width:215px;}
+  @keyframes pop{from{transform:translateY(-8px) scale(.96);opacity:0;}to{transform:none;opacity:1;}}
+  .mk-toast b{display:block;font-size:13px;}
+  .mk-toast small{color:#a9c1b3;}
+
+  /* Sections */
+  section{padding:90px 0;}
+  .sec-head{text-align:center;max-width:640px;margin:0 auto 56px;}
+  .sec-head h2{font-size:clamp(30px,4.5vw,46px);margin:14px 0 12px;}
+  .sec-head p{color:var(--soft);font-size:17px;}
+
+  /* Problem→Solution band */
+  .band{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .band .cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  .band .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:14px;}
+  .pill.bad{background:#f8e6e1;color:#c0492f;} .pill.good{background:#e7f3ec;color:var(--green);}
+  .band ul{list-style:none;margin-top:10px;}
+  .band li{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;color:var(--ink);font-size:15.5px;}
+  .band li .ic{flex-shrink:0;font-size:17px;}
+
+  /* Features */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:transform .2s,box-shadow .2s;}
+  .feat:hover{transform:translateY(-4px);box-shadow:0 24px 50px -28px rgba(20,40,30,.4);}
+  .feat .fi{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#e7f3ec,#f3ece0);display:grid;place-items:center;font-size:24px;margin-bottom:16px;}
+  .feat h3{font-size:22px;margin-bottom:8px;}
+  .feat p{color:var(--soft);font-size:14.5px;}
+
+  /* Steps */
+  .steps{background:var(--green-dark);color:#fff;}
+  .steps .sec-head h2{color:#fff;} .steps .sec-head p{color:#9db8a8;}
+  .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .step{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:var(--radius);padding:28px;position:relative;}
+  .step .num{font-family:'Cormorant Garamond',serif;font-size:46px;color:var(--gold);line-height:1;margin-bottom:10px;}
+  .step h3{font-size:21px;color:#fff;margin-bottom:8px;}
+  .step p{color:#cfe0d6;font-size:14.5px;}
+
+  /* Pricing */
+  .price-card{max-width:520px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 70px -40px rgba(20,40,30,.5);overflow:hidden;}
+  .price-card .ph{background:linear-gradient(135deg,#10211a,#1f7a52);color:#fff;padding:30px;text-align:center;}
+  .price-card .ph .amt{font-family:'Cormorant Garamond',serif;font-size:40px;}
+  .price-card .ph .amt small{font-size:16px;font-family:'DM Sans';color:#cfe0d6;}
+  .price-card .pb{padding:28px 30px;}
+  .price-card .pb li{list-style:none;display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:15px;}
+  .price-card .pb li .ck{color:var(--green);font-weight:700;}
+  .price-note{text-align:center;color:var(--soft);font-size:13.5px;margin-top:16px;}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto;}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 20px;margin-bottom:12px;transition:box-shadow .2s;}
+  .faq details[open]{box-shadow:0 14px 34px -22px rgba(20,40,30,.4);}
+  .faq summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:600;font-size:16.5px;display:flex;justify-content:space-between;align-items:center;gap:14px;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary::after{content:'+';color:var(--green);font-size:24px;font-weight:400;line-height:1;}
+  .faq details[open] summary::after{content:'–';}
+  .faq details p{padding:0 0 18px;color:var(--soft);font-size:15px;}
+
+  /* CTA */
+  .cta{background:linear-gradient(160deg,#16342a,#10211a);color:#fff;text-align:center;}
+  .cta h2{font-size:clamp(30px,4.5vw,46px);color:#fff;margin-bottom:14px;}
+  .cta p{color:#cfe0d6;font-size:17px;max-width:540px;margin:0 auto 28px;}
+
+  /* Footer */
+  footer{background:#0b1712;color:#8fa89a;padding:50px 0 36px;font-size:14px;}
+  footer .frow{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+  footer .logo{color:#fff;font-size:22px;}
+  footer a{color:#cfe0d6;}
+  footer a:hover{color:var(--gold);}
+  footer .fcol{display:flex;flex-direction:column;gap:8px;}
+  footer .fbot{border-top:1px solid rgba(255,255,255,.08);margin-top:30px;padding-top:20px;font-size:12.5px;color:#6f897b;}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s;}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media(max-width:860px){
+    header nav{position:fixed;inset:0 0 0 auto;width:min(80vw,300px);background:var(--green-dark);flex-direction:column;justify-content:center;transform:translateX(100%);transition:transform .3s;padding:40px;}
+    header nav.open{transform:none;}
+    header nav a.lnk{color:#f1ebe0;font-size:18px;}
+    .nav-toggle{display:flex;z-index:120;}
+    .hero-grid,.band .cols{grid-template-columns:1fr;}
+    .hero{padding-top:120px;}
+    .mockup{order:-1;}
+    .feat-grid,.step-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="bar">
+    <a href="#" class="logo"><span class="mark">T</span> TableLive</a>
+    <nav id="nav">
+      <a class="lnk" href="#fonctionnalites">Fonctionnalités</a>
+      <a class="lnk" href="#etapes">Comment ça marche</a>
+      <a class="lnk" href="#tarifs">Tarifs</a>
+      <a class="btn primary" href="#contact" style="padding:10px 20px;font-size:14px">Demander une démo</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Réservations & plan de salle</span>
+      <h1>Les réservations de votre restaurant, <em>en direct</em>.</h1>
+      <p class="lead">TableLive centralise vos réservations, vous laisse agencer votre salle en temps réel et confirme automatiquement vos clients. Fini les réservations éparpillées entre le téléphone, les mails et le carnet.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#contact">Demander une démo</a>
+        <a class="btn ghost" href="#fonctionnalites">Découvrir les fonctionnalités</a>
+      </div>
+      <div class="hero-trust">
+        <span>⚡ Temps réel</span>
+        <span>📱 Tablette · mobile · ordi</span>
+        <span>🛠️ Sans installation</span>
+        <span>🇨🇭 Pensé pour la Suisse</span>
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mk-top"><i></i><i></i><i></i><span class="mk-title">TableLive · Plan de salle</span></div>
+      <div class="floor">
+        <div class="t" style="left:14px;top:16px;width:38px;height:38px">2</div>
+        <div class="t" style="left:14px;top:70px;width:38px;height:38px">2</div>
+        <div class="t res" style="left:80px;top:24px;width:64px;height:40px">4</div>
+        <div class="t occ" style="left:80px;top:90px;width:64px;height:40px">4</div>
+        <div class="t res" style="left:175px;top:30px;width:92px;height:40px">6</div>
+        <div class="t" style="left:175px;top:120px;width:38px;height:38px">2</div>
+        <div class="t occ" style="left:250px;top:120px;width:64px;height:40px">4</div>
+        <div class="mk-toast"><span style="font-size:18px">📩</span><div><b>Nouvelle réservation</b><small>Famille Rey · 4 pers. · 19h30</small></div></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;font-size:11.5px;color:var(--soft)">
+        <span>🟢 Libre</span><span>🟠 Réservée</span><span>🔵 Installée</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM / SOLUTION -->
+<section class="band">
+  <div class="wrap cols">
+    <div class="reveal">
+      <span class="pill bad">Aujourd'hui</span>
+      <h2 style="font-size:34px">Les réservations, c'est le casse-tête</h2>
+      <ul style="margin-top:18px">
+        <li><span class="ic">📵</span> Des appels en plein coup de feu, des mails qu'on oublie, un carnet illisible.</li>
+        <li><span class="ic">❓</span> On ne sait jamais vraiment combien de couverts ce soir.</li>
+        <li><span class="ic">🪑</span> Replacer les tables à la dernière minute, sur un coin de nappe.</li>
+        <li><span class="ic">🙈</span> Des no-shows, des doublons, des tables oubliées.</li>
+      </ul>
+    </div>
+    <div class="reveal">
+      <span class="pill good">Avec TableLive</span>
+      <h2 style="font-size:34px">Tout au même endroit, en direct</h2>
+      <ul style="margin-top:18px">
+        <li><span class="ic">✅</span> Les réservations arrivent <b>en temps réel</b> sur votre écran.</li>
+        <li><span class="ic">📊</span> Couverts, tables placées, services : tout est clair d'un coup d'œil.</li>
+        <li><span class="ic">🖐️</span> Vous agencez votre salle en <b>glissant les tables</b>, comme un plan.</li>
+        <li><span class="ic">📧</span> Le client reçoit sa <b>confirmation automatique</b> par e-mail.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="fonctionnalites">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" style="justify-content:center">Fonctionnalités</span>
+      <h2>Tout ce qu'il faut pour gérer votre salle</h2>
+      <p>Un outil simple, pensé pour le rythme d'un restaurant.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal"><div class="fi">📋</div><h3>Réservations en direct</h3><p>Chaque demande arrive instantanément sur l'écran du restaurant, avec nom, couverts, heure et remarques.</p></div>
+      <div class="feat reveal"><div class="fi">🪑</div><h3>Plan de salle interactif</h3><p>Glissez vos tables pour agencer la salle du soir. Fusionnez, tournez, redimensionnez — à l'échelle réelle.</p></div>
+      <div class="feat reveal"><div class="fi">🌐</div><h3>Réservation sur votre site</h3><p>Un formulaire intégré à votre site web : le client réserve sans changer de page, ça tombe direct dans l'app.</p></div>
+      <div class="feat reveal"><div class="fi">📧</div><h3>Confirmation automatique</h3><p>Vous validez d'un clic, le client reçoit immédiatement son e-mail de confirmation. Moins de no-shows.</p></div>
+      <div class="feat reveal"><div class="fi">🤖</div><h3>Placement automatique</h3><p>Un bouton place tous vos clients sur les bonnes tables : la bonne taille au bon groupe.</p></div>
+      <div class="feat reveal"><div class="fi">🕒</div><h3>Services & créneaux</h3><p>Gérez plusieurs services (midi, 1er et 2e soir). Une même table peut tourner dans la soirée.</p></div>
+      <div class="feat reveal"><div class="fi">👥</div><h3>Planning de l'équipe</h3><p>Qui travaille, à quels horaires — un planning hebdo simple, par salle et par rôle.</p></div>
+      <div class="feat reveal"><div class="fi">🌿</div><h3>Multi-salles</h3><p>Intérieur, terrasse, étage : chaque espace a son propre plan, dans le même outil.</p></div>
+      <div class="feat reveal"><div class="fi">📱</div><h3>Partout, sans installation</h3><p>Sur tablette en salle, sur le mobile du gérant, sur l'ordi du bureau. Rien à télécharger.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps" id="etapes">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" style="justify-content:center">Comment ça marche</span>
+      <h2>De la demande à la table, en 3 temps</h2>
+    </div>
+    <div class="step-grid">
+      <div class="step reveal"><div class="num">1</div><h3>Le client réserve</h3><p>Depuis votre site, votre page Instagram ou Google — en quelques secondes, sur son téléphone.</p></div>
+      <div class="step reveal"><div class="num">2</div><h3>Vous recevez en direct</h3><p>La réservation apparaît sur votre écran avec une notification. Vous la placez sur le plan d'un glissement.</p></div>
+      <div class="step reveal"><div class="num">3</div><h3>Le client est confirmé</h3><p>Vous confirmez d'un clic, il reçoit son e-mail. Le soir venu, vous savez exactement qui arrive et où.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="tarifs">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" style="justify-content:center">Tarifs</span>
+      <h2>Simple et sans surprise</h2>
+      <p>Une mise en place sur mesure, puis un abonnement mensuel. Sans engagement long.</p>
+    </div>
+    <div class="price-card reveal">
+      <div class="ph">
+        <div style="font-family:'DM Sans';font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-size:13px;color:#cfe0d6">Pack TableLive</div>
+        <div class="amt" style="margin-top:8px">Installation + <small>abonnement mensuel</small></div>
+      </div>
+      <div class="pb">
+        <ul>
+          <li><span class="ck">✓</span> Mise en place de votre plan de salle et de votre formulaire de réservation</li>
+          <li><span class="ck">✓</span> Réservations en temps réel + confirmations automatiques par e-mail</li>
+          <li><span class="ck">✓</span> Plan de salle, services, planning d'équipe, multi-salles</li>
+          <li><span class="ck">✓</span> Accès sur tablette, mobile et ordinateur</li>
+          <li><span class="ck">✓</span> Support et mises à jour inclus</li>
+        </ul>
+        <a class="btn dark" href="#contact" style="width:100%;justify-content:center;margin-top:8px">Demander un devis</a>
+        <p class="price-note">Tarif adapté à la taille de votre établissement — contactez-nous pour une démo et un devis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" style="justify-content:center">Questions fréquentes</span>
+      <h2>Vous vous demandez peut-être…</h2>
+    </div>
+    <div class="faq reveal">
+      <details><summary>Faut-il installer un logiciel ?</summary><p>Non. TableLive s'ouvre dans le navigateur et peut s'ajouter en icône sur votre tablette ou téléphone, comme une appli — sans passer par un store, sans téléchargement.</p></details>
+      <details><summary>Ça marche sur tablette en salle ?</summary><p>Oui : tablette, mobile et ordinateur. L'interface s'adapte à chaque écran, et tout se synchronise en temps réel entre vos appareils.</p></details>
+      <details><summary>Et si je n'ai pas de site internet ?</summary><p>Pas de souci — on vous fournit une page de réservation prête à partager (Instagram, Google, WhatsApp). Et si vous voulez un vrai site, NB-Design s'en occupe aussi.</p></details>
+      <details><summary>Mes données et celles de mes clients sont-elles protégées ?</summary><p>Oui. Chaque restaurant a un accès sécurisé par mot de passe et ne voit que ses propres réservations. Les données sont hébergées sur une infrastructure professionnelle.</p></details>
+      <details><summary>Y a-t-il un engagement ?</summary><p>Non. C'est un abonnement mensuel sans engagement long : on met en place, vous testez, et vous restez aussi longtemps que ça vous est utile.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="cta" id="contact">
+  <div class="wrap reveal">
+    <span class="eyebrow" style="justify-content:center;color:var(--green-glow)">Demander une démo</span>
+    <h2>Voyez TableLive sur votre restaurant</h2>
+    <p>Montrez-nous votre établissement, on vous prépare une démonstration et un devis personnalisé. Aucune installation, aucun engagement.</p>
+    <div class="hero-cta" style="justify-content:center">
+      <a class="btn primary" href="mailto:nb-digitaldesign@outlook.com?subject=Demande%20de%20démo%20TableLive&body=Bonjour,%20je%20souhaite%20une%20démo%20de%20TableLive%20pour%20mon%20restaurant.">✉️ Demander une démo</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="frow">
+      <div style="max-width:280px">
+        <div class="logo"><span class="mark" style="width:30px;height:30px;font-size:17px">T</span> TableLive</div>
+        <p style="margin-top:12px;color:#8fa89a;font-size:13.5px">L'outil de réservation et de plan de salle pour les restaurants suisses.</p>
+      </div>
+      <div class="fcol">
+        <strong style="color:#fff">Produit</strong>
+        <a href="#fonctionnalites">Fonctionnalités</a>
+        <a href="#etapes">Comment ça marche</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="mailto:nb-digitaldesign@outlook.com?subject=Demande%20de%20démo%20TableLive">Demander une démo</a>
+      </div>
+      <div class="fcol">
+        <strong style="color:#fff">Contact</strong>
+        <a href="mailto:nb-digitaldesign@outlook.com">nb-digitaldesign@outlook.com</a>
+        <span style="color:#8fa89a">Une création NB-Design</span>
+        <span style="color:#8fa89a">Valais · Suisse</span>
+      </div>
+    </div>
+    <div class="fbot">© 2026 TableLive — par NB-Design. Tous droits réservés.</div>
+  </div>
+</footer>
+
+<script>
+  const hdr=document.getElementById('hdr');
+  addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>30));
+  const nav=document.getElementById('nav'), tg=document.getElementById('navToggle');
+  tg.onclick=()=>nav.classList.toggle('open');
+  nav.querySelectorAll('a').forEach(a=>a.onclick=()=>nav.classList.remove('open'));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
