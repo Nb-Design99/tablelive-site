@@ -159,7 +159,11 @@
   .notif small{color:var(--soft);font-size:12px;}
 
   /* S2/S3 floor */
-  .mfloor{position:relative;height:100%;}
+  .mfloor{position:relative;height:100%;border-radius:10px;border:1px solid var(--line2);
+    background:
+      linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/28px 28px,
+      #0c1813;}
   .mt{position:absolute;display:grid;place-items:center;border:2px solid var(--green-glow);background:var(--green-soft);color:var(--green-glow);border-radius:7px;font-weight:700;font-size:12px;transition:left .7s cubic-bezier(.4,0,.2,1),top .7s cubic-bezier(.4,0,.2,1),opacity .5s,background .3s,border-color .3s,color .3s;}
   .mt .who{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:600;color:var(--ink);background:var(--bg3);border:1px solid var(--line);padding:0 6px;border-radius:999px;opacity:0;transition:opacity .3s;}
   .mt .who.show{opacity:1;}
@@ -171,6 +175,7 @@
   .hand{position:absolute;font-size:22px;opacity:0;transition:left .7s cubic-bezier(.4,0,.2,1),top .7s cubic-bezier(.4,0,.2,1),opacity .3s;pointer-events:none;z-index:5;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));}
   .hand.show{opacity:1;}
   .mt.grab{transform:scale(1.1);border-color:var(--gold);background:rgba(201,168,76,.2);color:var(--gold);box-shadow:0 16px 30px rgba(0,0,0,.45);z-index:25;}
+  .mt.lift{border-color:var(--gold);background:rgba(201,168,76,.22);color:var(--gold);box-shadow:0 14px 28px rgba(0,0,0,.5);z-index:25;}
   .slide-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:8;background:rgba(16,30,24,.88);border:1px solid var(--line);color:var(--ink);font-size:12px;font-weight:600;padding:7px 13px;border-radius:999px;display:flex;align-items:center;gap:7px;white-space:nowrap;}
 
   /* S4 staff grid */
@@ -281,12 +286,12 @@
       <div class="glasscard ha-main">
         <div class="mk-top"><i></i><i></i><i></i><span class="mk-title">TableLive · Plan de salle</span></div>
         <div class="ha-floor">
-          <div class="ha-t" style="left:14px;top:14px;width:38px;height:38px">2</div>
-          <div class="ha-t" style="left:14px;top:74px;width:38px;height:38px">2</div>
-          <div class="ha-t res" style="left:82px;top:24px;width:64px;height:40px">4</div>
-          <div class="ha-t occ" style="left:82px;top:96px;width:64px;height:40px">4</div>
-          <div class="ha-t res" style="left:176px;top:34px;width:90px;height:40px">6</div>
-          <div class="ha-t" style="left:200px;top:104px;width:38px;height:38px">2</div>
+          <div class="ha-t" style="left:0;top:0;width:28px;height:28px">2</div>
+          <div class="ha-t" style="left:0;top:56px;width:28px;height:28px">2</div>
+          <div class="ha-t res" style="left:56px;top:0;width:56px;height:28px">4</div>
+          <div class="ha-t occ" style="left:56px;top:56px;width:56px;height:28px">4</div>
+          <div class="ha-t res" style="left:140px;top:28px;width:84px;height:28px">6</div>
+          <div class="ha-t" style="left:168px;top:84px;width:28px;height:28px">2</div>
         </div>
       </div>
       <div class="glasscard ha-conf">
@@ -341,12 +346,12 @@
           <!-- S2 : edit floor plan -->
           <div class="slide" id="s2">
             <div class="mfloor" id="m2">
-              <div class="mt" data-x="14"  data-y="14"  style="left:120px;top:150px;width:38px;height:38px">2</div>
-              <div class="mt" data-x="62"  data-y="14"  style="left:240px;top:40px;width:38px;height:38px">2</div>
-              <div class="mt" data-x="120" data-y="20"  style="left:60px;top:200px;width:64px;height:40px">4</div>
-              <div class="mt" data-x="120" data-y="92"  style="left:300px;top:170px;width:64px;height:40px">4</div>
-              <div class="mt" data-x="230" data-y="30"  style="left:30px;top:40px;width:90px;height:40px">6</div>
-              <div class="mt ghostadd" data-x="230" data-y="110" style="left:230px;top:110px;width:64px;height:40px">4</div>
+              <div class="mt" data-fx="92"  data-fy="120"  style="left:0;top:0;width:28px;height:28px">2</div>
+              <div class="mt" data-fx="126" data-fy="-34"  style="left:0;top:56px;width:28px;height:28px">2</div>
+              <div class="mt" data-fx="-44" data-fy="96"   style="left:56px;top:0;width:56px;height:28px">4</div>
+              <div class="mt" data-fx="154" data-fy="44"   style="left:56px;top:56px;width:56px;height:28px">4</div>
+              <div class="mt" data-fx="-84" data-fy="62"   style="left:140px;top:0;width:84px;height:28px">6</div>
+              <div class="mt ghostadd" style="left:140px;top:56px;width:56px;height:28px">4</div>
               <div class="hand" id="m2hand">🖐️</div>
               <div class="slide-hint">✋ Glissez vos tables pour agencer la salle</div>
             </div>
@@ -355,12 +360,12 @@
           <!-- S3 : seat guests -->
           <div class="slide" id="s3">
             <div class="mfloor" id="m3">
-              <div class="mt" data-nm="Rey"     style="left:30px;top:30px;width:64px;height:40px">4</div>
-              <div class="mt" data-nm="Nicolet" style="left:140px;top:30px;width:38px;height:38px">2</div>
-              <div class="mt" data-nm="Bonvin"  style="left:230px;top:40px;width:90px;height:40px">6</div>
-              <div class="mt" style="left:30px;top:150px;width:38px;height:38px">2</div>
-              <div class="mt" style="left:140px;top:150px;width:64px;height:40px">4</div>
-              <div class="mt" style="left:300px;top:150px;width:38px;height:38px">2</div>
+              <div class="mt" data-nm="Rey"     style="left:0;top:0;width:56px;height:28px">4</div>
+              <div class="mt" data-nm="Nicolet" style="left:84px;top:0;width:28px;height:28px">2</div>
+              <div class="mt" data-nm="Bonvin"  style="left:140px;top:0;width:84px;height:28px">6</div>
+              <div class="mt" style="left:0;top:84px;width:28px;height:28px">2</div>
+              <div class="mt" style="left:84px;top:84px;width:56px;height:28px">4</div>
+              <div class="mt" style="left:196px;top:84px;width:28px;height:28px">2</div>
               <div class="hand" id="m3hand">🖐️</div>
             </div>
           </div>
@@ -561,25 +566,25 @@
       st(()=>notif.classList.remove('in'), 4200);
     }
     function playEdit(){
-      const m2=document.getElementById('m2');
-      const tables=[...m2.querySelectorAll('.mt')], hand=document.getElementById('m2hand');
+      const m2=document.getElementById('m2'), hand=document.getElementById('m2hand');
       const ghost=m2.querySelector('.mt.ghostadd');
-      const movers=tables.filter(t=>!t.classList.contains('ghostadd'));
-      // mémorise les positions de départ une seule fois, puis remet la salle "en désordre" à chaque passage
-      if(!m2._init){ movers.forEach(t=>{ t.dataset.sx=t.style.left; t.dataset.sy=t.style.top; }); m2._init=true; }
-      movers.forEach(t=>{ t.style.transition='none'; t.style.left=t.dataset.sx; t.style.top=t.dataset.sy; t.classList.remove('grab','pulse'); });
+      const movers=[...m2.querySelectorAll('.mt:not(.ghostadd)')];
+      // Les tables sont à leur place finale (alignées) ; on les fait GLISSER en place via transform
+      // (transform s'anime de façon fiable, contrairement à left/top dans ce moteur de rendu).
       ghost.classList.remove('in','pulse'); hand.classList.remove('show');
-      void m2.offsetWidth;                              // reflow → le reset est instantané (pas d'animation)
-      movers.forEach(t=>{ t.style.transition=''; });    // rétablit la transition CSS
-      // chaque table est "saisie" (elle se soulève), tirée par la main, puis posée sur la grille
+      // 1) décalage initial SANS transition
+      movers.forEach(t=>{ t.style.transition='none'; t.style.transform='translate('+(t.dataset.fx||0)+'px,'+(t.dataset.fy||0)+'px)'; t.classList.remove('lift','pulse'); });
+      void m2.offsetWidth;
+      // 2) on RÉ-ACTIVE la transition pendant que la table est encore décalée (sinon le moteur n'anime pas)
+      movers.forEach(t=>{ t.style.transition='transform .6s cubic-bezier(.34,1.1,.4,1),background .3s,border-color .3s,box-shadow .3s'; });
+      void m2.offsetWidth;
+      // 3) puis on change seulement le transform → glissement animé en place
       movers.forEach((t,k)=>{
-        const at=400+k*560;
-        st(()=>{ hand.classList.add('show'); hand.style.left=t.style.left; hand.style.top=t.style.top; }, at);
-        st(()=>t.classList.add('grab'), at+150);
-        st(()=>{ t.style.left=t.dataset.x+'px'; t.style.top=t.dataset.y+'px'; hand.style.left=t.dataset.x+'px'; hand.style.top=t.dataset.y+'px'; }, at+320);
-        st(()=>{ t.classList.remove('grab'); t.classList.add('pulse'); st(()=>t.classList.remove('pulse'),450); }, at+1020);
+        const at=350+k*430;
+        st(()=>{ t.classList.add('lift'); hand.classList.add('show'); hand.style.left=t.offsetLeft+'px'; hand.style.top=t.offsetTop+'px'; t.style.transform='translate(0,0)'; }, at);
+        st(()=>{ t.classList.remove('lift'); t.classList.add('pulse'); st(()=>t.classList.remove('pulse'),450); }, at+700);
       });
-      st(()=>{ hand.classList.remove('show'); ghost.classList.add('in','pulse'); st(()=>ghost.classList.remove('pulse'),500); }, 400+movers.length*560+700);
+      st(()=>{ hand.classList.remove('show'); ghost.classList.add('in','pulse'); st(()=>ghost.classList.remove('pulse'),450); }, 350+movers.length*430+450);
     }
     function playSeat(){
       const tables=[...document.querySelectorAll('#m3 .mt')], hand=document.getElementById('m3hand');
