@@ -170,6 +170,8 @@
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(110,208,154,.5);}100%{box-shadow:0 0 0 14px rgba(110,208,154,0);}}
   .hand{position:absolute;font-size:22px;opacity:0;transition:left .7s cubic-bezier(.4,0,.2,1),top .7s cubic-bezier(.4,0,.2,1),opacity .3s;pointer-events:none;z-index:5;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));}
   .hand.show{opacity:1;}
+  .mt.grab{transform:scale(1.1);border-color:var(--gold);background:rgba(201,168,76,.2);color:var(--gold);box-shadow:0 16px 30px rgba(0,0,0,.45);z-index:25;}
+  .slide-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:8;background:rgba(16,30,24,.88);border:1px solid var(--line);color:var(--ink);font-size:12px;font-weight:600;padding:7px 13px;border-radius:999px;display:flex;align-items:center;gap:7px;white-space:nowrap;}
 
   /* S4 staff grid */
   .sg{width:100%;border-collapse:separate;border-spacing:6px;}
@@ -346,6 +348,7 @@
               <div class="mt" data-x="230" data-y="30"  style="left:30px;top:40px;width:90px;height:40px">6</div>
               <div class="mt ghostadd" data-x="230" data-y="110" style="left:230px;top:110px;width:64px;height:40px">4</div>
               <div class="hand" id="m2hand">🖐️</div>
+              <div class="slide-hint">✋ Glissez vos tables pour agencer la salle</div>
             </div>
           </div>
 
@@ -507,6 +510,7 @@
   /* ========== DEMO CAROUSEL ========== */
   (function(){
     const DUR=5400;
+    const DURS=[3900,4800,5000,4600,4200];   // durée par slide (1 = formulaire, raccourci)
     const titles=['Réservation en ligne','Tableau de bord','Plan de salle — édition','Plan de salle — placement','Planning de l\'équipe'];
     const slides=[...document.querySelectorAll('.screen .slide')];
     const tabs=[...document.querySelectorAll('#tabs .stab')];
@@ -517,7 +521,7 @@
     function clearSlideTimers(){ slideTimers.forEach(clearTimeout); slideTimers=[]; }
 
     function resetBar(tab){ const b=tab.querySelector('.st-bar'); b.classList.remove('run'); b.style.transition='none'; b.style.width='0'; void b.offsetWidth; }
-    function runBar(tab){ const b=tab.querySelector('.st-bar'); b.style.transition='width '+DUR+'ms linear'; b.classList.add('run'); b.style.width='100%'; }
+    function runBar(tab,dur){ const b=tab.querySelector('.st-bar'); b.style.transition='width '+(dur||DUR)+'ms linear'; b.classList.add('run'); b.style.width='100%'; }
 
     const players=[playForm,playNotif,playEdit,playSeat,playStaff];
 
@@ -528,7 +532,7 @@
       tabs.forEach((t,k)=>{ t.classList.toggle('active',k===i); resetBar(t); });
       sfTitle.style.opacity=0; setTimeout(()=>{ sfTitle.textContent=titles[i]; sfTitle.style.opacity=1; },200);
       players[i]();
-      if(running){ runBar(tabs[i]); mainTimer=setTimeout(()=>go((i+1)%slides.length),DUR); }
+      if(running){ runBar(tabs[i],DURS[i]); mainTimer=setTimeout(()=>go((i+1)%slides.length),DURS[i]); }
     }
 
     // ---- slide animations ----
@@ -557,21 +561,25 @@
       st(()=>notif.classList.remove('in'), 4200);
     }
     function playEdit(){
-      const tables=[...document.querySelectorAll('#m2 .mt')], hand=document.getElementById('m2hand');
-      const ghost=document.querySelector('#m2 .mt.ghostadd');
-      tables.forEach(t=>{ if(!t.classList.contains('ghostadd')){ t.dataset.sx=t.style.left; t.dataset.sy=t.style.top; }});
-      ghost.classList.remove('in');
-      // move each table to its tidy target, staggered, with a hand following
-      tables.forEach((t,k)=>{
-        if(t.classList.contains('ghostadd')) return;
-        st(()=>{
-          hand.classList.add('show'); hand.style.left=t.style.left; hand.style.top=t.style.top;
-          st(()=>{ t.style.left=t.dataset.x+'px'; t.style.top=t.dataset.y+'px'; t.classList.add('pulse');
-                   hand.style.left=t.dataset.x+'px'; hand.style.top=t.dataset.y+'px';
-                   st(()=>t.classList.remove('pulse'),500); }, 120);
-        }, 500+k*620);
+      const m2=document.getElementById('m2');
+      const tables=[...m2.querySelectorAll('.mt')], hand=document.getElementById('m2hand');
+      const ghost=m2.querySelector('.mt.ghostadd');
+      const movers=tables.filter(t=>!t.classList.contains('ghostadd'));
+      // mémorise les positions de départ une seule fois, puis remet la salle "en désordre" à chaque passage
+      if(!m2._init){ movers.forEach(t=>{ t.dataset.sx=t.style.left; t.dataset.sy=t.style.top; }); m2._init=true; }
+      movers.forEach(t=>{ t.style.transition='none'; t.style.left=t.dataset.sx; t.style.top=t.dataset.sy; t.classList.remove('grab','pulse'); });
+      ghost.classList.remove('in','pulse'); hand.classList.remove('show');
+      void m2.offsetWidth;                              // reflow → le reset est instantané (pas d'animation)
+      movers.forEach(t=>{ t.style.transition=''; });    // rétablit la transition CSS
+      // chaque table est "saisie" (elle se soulève), tirée par la main, puis posée sur la grille
+      movers.forEach((t,k)=>{
+        const at=400+k*560;
+        st(()=>{ hand.classList.add('show'); hand.style.left=t.style.left; hand.style.top=t.style.top; }, at);
+        st(()=>t.classList.add('grab'), at+150);
+        st(()=>{ t.style.left=t.dataset.x+'px'; t.style.top=t.dataset.y+'px'; hand.style.left=t.dataset.x+'px'; hand.style.top=t.dataset.y+'px'; }, at+320);
+        st(()=>{ t.classList.remove('grab'); t.classList.add('pulse'); st(()=>t.classList.remove('pulse'),450); }, at+1020);
       });
-      st(()=>{ hand.classList.remove('show'); ghost.classList.add('in'); ghost.classList.add('pulse'); st(()=>ghost.classList.remove('pulse'),500); }, 500+5*620);
+      st(()=>{ hand.classList.remove('show'); ghost.classList.add('in','pulse'); st(()=>ghost.classList.remove('pulse'),500); }, 400+movers.length*560+700);
     }
     function playSeat(){
       const tables=[...document.querySelectorAll('#m3 .mt')], hand=document.getElementById('m3hand');
@@ -599,25 +607,11 @@
       });
     }
 
-    // tab clicks
+    // Onglets cliquables (optionnel : permet de sauter à une étape)
     tabs.forEach((t,i)=>t.addEventListener('click',()=>{ running=true; go(i); }));
 
-    // Démarrage robuste : la boucle tourne en continu (ne dépend pas de l'IntersectionObserver).
+    // Défilement automatique continu 1→2→3→4→5→1, sans clic ni pause.
     running=true; go(0);
-
-    // Pause au survol pour laisser lire ; reprend en quittant.
-    const stage=document.querySelector('.stage');
-    stage.addEventListener('mouseenter',()=>{ running=false; clearTimeout(mainTimer); const b=tabs[cur].querySelector('.st-bar'); b.style.transition='none'; b.style.width=getComputedStyle(b).width; });
-    stage.addEventListener('mouseleave',()=>{ if(!running){ running=true; go(cur); } });
-
-    // Optimisation : suspend hors écran quand le navigateur le permet.
-    try{
-      const dio=new IntersectionObserver(es=>es.forEach(e=>{
-        if(e.isIntersecting){ if(!running){ running=true; go(cur); } }
-        else { running=false; clearTimeout(mainTimer); clearSlideTimers(); }
-      }),{threshold:.25});
-      dio.observe(document.getElementById('demo'));
-    }catch(_){}
   })();
 </script>
 </body>
